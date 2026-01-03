@@ -1,7 +1,7 @@
 # Docker 自动安装脚本
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Shell: Bash](https://img.shields.io/badge/Shell-Bash-green.svg)](https://www.gnu.org/software/bash/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg )](https://opensource.org/licenses/MIT )
+[![Shell: Bash](https://img.shields.io/badge/Shell-Bash-green.svg )](https://www.gnu.org/software/bash/ )
 
 一个智能的 Docker 和 Docker Compose 自动化安装脚本，支持多种国内镜像源和双模式安装。
 
@@ -36,7 +36,7 @@
 
 ```bash
 # 下载脚本
-wget https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh
+wget https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh 
 
 # 赋予执行权限
 chmod +x docker-install.sh
@@ -60,6 +60,19 @@ sudo ./docker-install.sh ustc
 sudo ./docker-install.sh ali    # 阿里云
 sudo ./docker-install.sh thu    # 清华大学
 ```
+
+### 方式三：一键安装（无需保存脚本）
+
+```bash
+# 一键安装（默认交互模式）
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)"
+
+# 一键安装 + 指定镜像源（无交互）
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)" bash aliyun
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)" bash ustc
+```
+
+**特点**：脚本不保存到本地，直接执行，适合快速部署和临时使用。
 
 ## 📖 使用方法
 
@@ -165,11 +178,11 @@ sudo apt-get update && sudo apt-get install -y curl
 
 ## 🔗 相关链接
 
-- [Docker 官方文档](https://docs.docker.com/)
-- [Docker Compose 文档](https://docs.docker.com/compose/)
-- [阿里云镜像站](https://developer.aliyun.com/mirror/)
-- [中科大镜像站](https://mirrors.ustc.edu.cn/)
-- [清华大学镜像站](https://mirrors.tuna.tsinghua.edu.cn/)
+- [Docker 官方文档](https://docs.docker.com/ )
+- [Docker Compose 文档](https://docs.docker.com/compose/ )
+- [阿里云镜像站](https://developer.aliyun.com/mirror/ )
+- [中科大镜像站](https://mirrors.ustc.edu.cn/ )
+- [清华大学镜像站](https://mirrors.tuna.tsinghua.edu.cn/ )
 
 ---
 
