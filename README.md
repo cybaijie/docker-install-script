@@ -36,7 +36,7 @@
 
 ```bash
 # 下载脚本
-wget https://raw.githubusercontent.com/yourusername/docker-install-script/main/docker-install.sh
+wget https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh
 
 # 赋予执行权限
 chmod +x docker-install.sh
