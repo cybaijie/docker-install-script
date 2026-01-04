@@ -165,7 +165,7 @@ apt-get install -y \
 # 添加 Docker GPG 密钥
 echo -e "\n${YELLOW}正在添加 Docker GPG 密钥...${NC}"
 mkdir -p /usr/share/keyrings
-if ! curl -fsSL "$GPG_URL" | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg; then
+if ! curl -fsSL "$GPG_URL" | gpg --yes --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg; then
     echo -e "${RED}添加 GPG 密钥失败，请检查网络连接${NC}"
     exit 1
 fi
