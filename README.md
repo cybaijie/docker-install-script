@@ -68,6 +68,7 @@ sudo ./docker-install.sh thu    # 清华大学
 sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)"
 
 # 一键安装 + 指定镜像源（无交互）
+sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)" bash official
 sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)" bash aliyun
 sudo bash -c "$(wget -qO- https://raw.githubusercontent.com/cybaijie/docker-install-script/main/docker-install.sh)" bash ustc
 ```
