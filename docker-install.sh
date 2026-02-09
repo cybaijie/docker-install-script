@@ -47,17 +47,24 @@ if [ "$EUID" -ne 0 ]; then
     fi
 fi
 
-# 检查系统是否为 Debian/Ubuntu
+# 检测系统类型和版本
 if ! command -v lsb_release &> /dev/null; then
     echo -e "${YELLOW}正在安装 lsb-release...${NC}"
     apt-get update && apt-get install -y lsb-release
 fi
 
-# 获取系统版本
-DEBIAN_VERSION=$(lsb_release -cs)
-echo -e "${GREEN}检测到系统版本: $DEBIAN_VERSION${NC}"
+# 获取系统信息
+DISTRO_ID=$(lsb_release -is | tr '[:upper:]' '[:lower:]')
+DISTRO_VERSION=$(lsb_release -cs)
+echo -e "${GREEN}检测到系统: $DISTRO_ID ($DISTRO_VERSION)${NC}"
 
-# 镜像源配置
+# 验证支持的系统
+if [ "$DISTRO_ID" != "ubuntu" ] && [ "$DISTRO_ID" != "debian" ]; then
+    echo -e "${RED}错误：不支持的系统 $DISTRO_ID，仅支持 Ubuntu 和 Debian${NC}"
+    exit 1
+fi
+
+# 镜像源配置 - 根据系统类型动态构建 URL
 declare -A MIRROR_NAMES=(
     ["official"]="官方源"
     ["aliyun"]="阿里云"
@@ -66,21 +73,34 @@ declare -A MIRROR_NAMES=(
     ["tsinghua"]="清华大学"
 )
 
-declare -A GPG_URLS=(
-    ["official"]="https://download.docker.com/linux/debian/gpg"
-    ["aliyun"]="https://mirrors.aliyun.com/docker-ce/linux/debian/gpg"
-    ["tencent"]="https://mirrors.cloud.tencent.com/docker-ce/linux/debian/gpg"
-    ["ustc"]="https://mirrors.ustc.edu.cn/docker-ce/linux/debian/gpg"
-    ["tsinghua"]="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/debian/gpg"
-)
-
-declare -A REPO_URLS=(
-    ["official"]="https://download.docker.com/linux/debian"
-    ["aliyun"]="https://mirrors.aliyun.com/docker-ce/linux/debian"
-    ["tencent"]="https://mirrors.cloud.tencent.com/docker-ce/linux/debian"
-    ["ustc"]="https://mirrors.ustc.edu.cn/docker-ce/linux/debian"
-    ["tsinghua"]="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/debian"
-)
+# 构建 GPG URL 和仓库 URL 的函数
+build_urls() {
+    local mirror=$1
+    local distro=$2
+    
+    case $mirror in
+        "official")
+            GPG_URL="https://download.docker.com/linux/${distro}/gpg"
+            REPO_URL="https://download.docker.com/linux/${distro}"
+            ;;
+        "aliyun")
+            GPG_URL="https://mirrors.aliyun.com/docker-ce/linux/${distro}/gpg"
+            REPO_URL="https://mirrors.aliyun.com/docker-ce/linux/${distro}"
+            ;;
+        "tencent")
+            GPG_URL="https://mirrors.cloud.tencent.com/docker-ce/linux/${distro}/gpg"
+            REPO_URL="https://mirrors.cloud.tencent.com/docker-ce/linux/${distro}"
+            ;;
+        "ustc")
+            GPG_URL="https://mirrors.ustc.edu.cn/docker-ce/linux/${distro}/gpg"
+            REPO_URL="https://mirrors.ustc.edu.cn/docker-ce/linux/${distro}"
+            ;;
+        "tsinghua")
+            GPG_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/${distro}/gpg"
+            REPO_URL="https://mirrors.tuna.tsinghua.edu.cn/docker-ce/linux/${distro}"
+            ;;
+    esac
+}
 
 # 解析命令行参数
 SELECTED_MIRROR=""
@@ -144,9 +164,8 @@ fi
 # 输出选择的镜像源
 echo -e "\n${GREEN}使用镜像源: ${MIRROR_NAMES[$SELECTED_MIRROR]}${NC}"
 
-# 获取对应的URL
-GPG_URL="${GPG_URLS[$SELECTED_MIRROR]}"
-REPO_URL="${REPO_URLS[$SELECTED_MIRROR]}"
+# 构建对应系统的 URL
+build_urls "$SELECTED_MIRROR" "$DISTRO_ID"
 
 # 卸载旧版本 Docker（如果存在）
 echo -e "\n${YELLOW}正在卸载旧版本 Docker...${NC}"
@@ -172,7 +191,7 @@ fi
 
 # 添加 Docker 软件源
 echo -e "\n${YELLOW}正在添加 Docker 软件源...${NC}"
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] $REPO_URL $DEBIAN_VERSION stable" | \
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] $REPO_URL $DISTRO_VERSION stable" | \
     tee /etc/apt/sources.list.d/docker.list > /dev/null
 
 # 更新软件包列表
