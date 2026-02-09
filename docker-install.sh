@@ -167,9 +167,16 @@ echo -e "\n${GREEN}使用镜像源: ${MIRROR_NAMES[$SELECTED_MIRROR]}${NC}"
 # 构建对应系统的 URL
 build_urls "$SELECTED_MIRROR" "$DISTRO_ID"
 
+# 调试输出（可选，确认 URL 正确）
+echo -e "${YELLOW}GPG URL: $GPG_URL${NC}"
+echo -e "${YELLOW}Repo URL: $REPO_URL${NC}"
+
 # 卸载旧版本 Docker（如果存在）
 echo -e "\n${YELLOW}正在卸载旧版本 Docker...${NC}"
 apt-get remove -y docker.io docker-doc docker-compose podman-docker containerd runc 2>/dev/null || true
+
+# 清理可能存在的错误源配置
+rm -f /etc/apt/sources.list.d/docker.list
 
 # 安装必要的依赖包
 echo -e "\n${YELLOW}正在安装依赖包...${NC}"
@@ -204,7 +211,7 @@ apt-get install -y docker-ce docker-ce-cli containerd.io
 
 # 安装 Docker Compose
 echo -e "\n${YELLOW}正在安装 Docker Compose...${NC}"
-DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d '"' -f 4)
+DOCKER_COMPOSE_VERSION=$(curl -s https://api.github.com/repos/docker/compose/releases/latest | grep 'tag_name' | cut -d'"' -f4)
 curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 chmod +x /usr/local/bin/docker-compose
 
